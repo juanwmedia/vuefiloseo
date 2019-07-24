@@ -71,6 +71,27 @@
                         <Exito @cerrarMensaje="mensajeExito = ''" v-show="mensajeExito" :mensaje="mensajeExito"></Exito>
 
                     </section>
+
+                    <!-- TOP -->
+                    <section class="section">
+                        <h2>TOP Recursos</h2>
+                        <hr>
+                        <div v-for="top in topRecursos" :key="top.id" class="box">
+                            <article class="media">
+                                <div class="media-content">
+                                    <div class="content top">
+                                        <p>
+                                            <a @click="visualizar(true, top.id)">
+                                                <strong>{{ top.titulo }}</strong>
+                                                <br>
+                                                <small>{{ top.votos }} voto/s</small>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -144,7 +165,7 @@
             }
         },
         computed: {
-            ...mapState(['usuario', 'perfil', 'recursos', 'otrosRecursos']),
+            ...mapState(['usuario', 'perfil', 'recursos', 'otrosRecursos', 'topRecursos']),
         },
         components: {
             Exito,

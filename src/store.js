@@ -22,6 +22,18 @@ fb.auth.onAuthStateChanged(user =>{
        store.commit('establecerComentarios', comentarios);
     });
 
+    // TOP Recursos (por votos)
+
+    fb.recursosColeccion.orderBy('votos', 'desc').limit(5).onSnapshot(querySnapshot => {
+        let recursos = [];
+        querySnapshot.forEach(doc => {
+            let recurso = doc.data();
+            recurso.id = doc.id;
+            recursos.push(recurso);
+        });
+        store.commit('establecerTopRecursos', recursos);
+    });
+
     // Recibimos recursos
     fb.recursosColeccion.orderBy('cuando', 'desc').onSnapshot(querySnapshot => {
         let propio = false;
@@ -60,6 +72,7 @@ const store = new Vuex.Store({
         usuario: null,
         perfil: {},
         recursos: [],
+        topRecursos: [],
         otrosRecursos: [],
         comentarios: [],
     },
@@ -72,6 +85,9 @@ const store = new Vuex.Store({
         },
         establecerRecursos(state, val) {
             state.recursos = val;
+        },
+        establecerTopRecursos(state, val) {
+            state.topRecursos = val;
         },
         establecerComentarios(state, val) {
             state.comentarios = val;
