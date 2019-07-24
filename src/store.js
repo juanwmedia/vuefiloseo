@@ -32,6 +32,10 @@ const store = new Vuex.Store({
             }).catch(error =>{
                 console.error(error);
             });
+        },
+        limpiar({commit}) {
+            commit('establecerUsuario', null);
+            commit('establecerPerfil', {});
         }
     }
 });
