@@ -1,5 +1,8 @@
 <template>
     <section class="section">
+
+        <Recurso @visualizar="visualizar" v-if="recursoVisible" :id="recursoId"></Recurso>
+
         <div class="container">
             <h1 class="title has-text-centered">Los mejores recursos para dominar Vue.js</h1>
             <hr />
@@ -18,6 +21,7 @@
                     </transition>
 
                     <RecursoPreview :key="recurso.id"
+                                    @visualizar="visualizar"
                                     @eliminar="eliminar"
                                     v-for="recurso in recursos"
                                     :datos="recurso">
@@ -78,6 +82,7 @@
     const fb = require('../firebase.js');
     import Exito from '../components/Exito';
     import Error from '../components/Error';
+    import Recurso from '../components/Recurso';
     import RecursoPreview from '../components/RecursoPreview';
     import { mapState } from 'vuex';
     export default {
@@ -89,7 +94,9 @@
                 descripcion: '',
                 trabajando: false,
                 mensajeError: '',
-                mensajeExito: ''
+                mensajeExito: '',
+                recursoId: null,
+                recursoVisible: false,
             }
         },
         methods: {
@@ -125,6 +132,12 @@
             limpiar() {
                 this.titulo = this.descripcion = this.url = '';
             },
+            visualizar(estado, id) {
+                if (id) {
+                    this.recursoId = id;
+                }
+                this.recursoVisible = estado;
+            },
             mostrarOtros() {
                 this.$store.commit('establecerRecursos', this.otrosRecursos.concat(this.recursos));
                 this.$store.commit('limpiarOtros');
@@ -137,6 +150,7 @@
             Exito,
             Error,
             RecursoPreview,
+            Recurso,
         }
     }
 </script>

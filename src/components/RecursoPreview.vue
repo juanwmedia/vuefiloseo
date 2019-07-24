@@ -18,7 +18,7 @@
                             <a :href="datos.url" target="_blank" class="button is-link is-small">Visitar</a>
                         </a>
                         <a class="level-item" aria-label="reply">
-                            <a href="#" target="_blank" class="button is-primary is-small">Más info.</a>
+                            <a @click="$emit('visualizar', true, datos.id)" target="_blank" class="button is-primary is-small">Más info.</a>
                         </a>
                     </div>
                 </nav>
