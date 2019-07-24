@@ -39,6 +39,23 @@
                 <Error v-show="mensajeError" :mensaje="mensajeError"></Error>
                 <Exito @cerrarMensaje="mensajeExito = ''" v-show="mensajeExito" :mensaje="mensajeExito"></Exito>
 
+                <br>
+                <template v-for="comentario in comentariosLocales">
+                    <div :key="comentario.id" class="box">
+                        <article class="media">
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        {{ comentario.comentario }}
+                                        <br>
+                                        <strong>{{ comentario.nombre }}</strong> | <small>{{ comentario.cuando | fechaHace }}</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </template>
+
             </section>
             <footer class="modal-card-foot">
                 <span v-if="!usuario">
@@ -89,7 +106,12 @@
         },
         props: ['id'],
         computed: {
-            ...mapState(['usuario', 'recursos', 'perfil'])
+            ...mapState(['usuario', 'recursos', 'perfil', 'comentarios']),
+            comentariosLocales() {
+                return this.comentarios.filter(comentario => {
+                   return comentario.recursoId === this.id;
+                });
+            }
         },
         methods: {
             votar() {

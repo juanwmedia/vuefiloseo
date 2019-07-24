@@ -11,6 +11,18 @@ fb.auth.onAuthStateChanged(user =>{
         store.dispatch('obtenerPerfilUsuario');
     }
 
+    // Recibimos comentarios
+    fb.comentariosColeccion.orderBy('cuando', 'desc').onSnapshot(querySnapshot => {
+       let comentarios = [];
+       querySnapshot.forEach(doc => {
+          let comentario = doc.data();
+          comentario.id = doc.id;
+          comentarios.push(comentario);
+       });
+       store.commit('establecerComentarios', comentarios);
+    });
+
+    // Recibimos recursos
     fb.recursosColeccion.orderBy('cuando', 'desc').onSnapshot(querySnapshot => {
         let propio = false;
 
@@ -49,6 +61,7 @@ const store = new Vuex.Store({
         perfil: {},
         recursos: [],
         otrosRecursos: [],
+        comentarios: [],
     },
     mutations: {
         establecerUsuario(state, val) {
@@ -59,6 +72,9 @@ const store = new Vuex.Store({
         },
         establecerRecursos(state, val) {
             state.recursos = val;
+        },
+        establecerComentarios(state, val) {
+            state.comentarios = val;
         },
         establecerOtros(state, val) {
             state.otrosRecursos.unshift(val);
