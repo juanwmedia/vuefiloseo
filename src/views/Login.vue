@@ -24,7 +24,7 @@
                         </div>
                         <div class="field">
                             <p class="control">
-                                <button class="button is-info">
+                                <button class="button is-info" :class="{'is-loading': trabajando}">
                                     Login
                                 </button>
                             </p>
@@ -55,10 +55,13 @@
             return {
                 correoe: '',
                 contrasena: '',
+                trabajando: false,
             }
         },
         methods: {
             login() {
+                this.trabajando = true;
+
                 fb.auth.signInWithEmailAndPassword(this.correoe, this.contrasena).then(user => {
                     // guardar la info del usuario (UID)
                     this.$store.commit('establecerUsuario', user.user);
@@ -70,7 +73,7 @@
                     this.$router.push('/');
                 }).catch(error => {
                     console.error(error);
-                });
+                }).finally(()=> this.trabajando = false);
             }
         }
     }

@@ -40,7 +40,7 @@
                         </div>
                         <div class="field">
                             <p class="control">
-                                <button class="button is-info">
+                                <button class="button is-info" :class="{'is-loading': trabajando}">
                                     Registro
                                 </button>
                             </p>
@@ -73,10 +73,13 @@
                 apellidos: '',
                 correoe: '',
                 contrasena: '',
+                trabajando: false,
             }
         },
         methods: {
             registro() {
+
+                this.trabajando = true;
 
                 fb.auth.createUserWithEmailAndPassword(this.correoe, this.contrasena).then(user => {
                     // Guardar los datos (UID) del nuevo usuario
@@ -96,7 +99,7 @@
 
                 }).catch(error => {
                     console.error(error);
-                });
+                }).finally(()=> this.trabajando = false);
             }
         }
     }
