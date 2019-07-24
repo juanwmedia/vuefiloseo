@@ -8,45 +8,11 @@
             <div class="columns" id="portada">
                 <div class="column is-half-tablet">
 
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-content">
-                                <div class="content">
-                                    <button class="delete is-small is-pulled-right" aria-label="delete"></button>
-                                    <p>
-                                        <strong>Título</strong>
-                                        <br>
-                                        Descripción...
-                                        <br>
-                                        <small>Usuario</small> <small><i> (Hace un  momento...)</i></small>
-                                    </p>
-                                </div>
-                                <nav class="level is-pulled-left">
-                                    <div class="level-left">
-                                        <a class="level-item" aria-label="reply">
-                                            <a href="#" target="_blank" class="button is-link is-small">Visitar</a>
-                                        </a>
-                                        <a class="level-item" aria-label="reply">
-                                            <a href="#" target="_blank" class="button is-primary is-small">Más info.</a>
-                                        </a>
-                                    </div>
-                                </nav>
-                                <nav class="level is-pulled-right">
-                                    <div class="level-right">
-                                        <a href="#" class="level-item" aria-label="reply">
-                                            3 comentario/s
-                                        </a>
-                                        <a  href="#" class="level-item" aria-label="like">
-                                            2 voto/s
-                                        </a>
-                                    </div>
-                                </nav>
-                            </div>
-                        </article>
-                    </div>
-
-
-
+                    <RecursoPreview :key="recurso.id"
+                                    @eliminar="eliminar"
+                                    v-for="recurso in recursos"
+                                    :datos="recurso">
+                    </RecursoPreview>
 
                 </div>
 
@@ -101,6 +67,7 @@
     const fb = require('../firebase.js');
     import Exito from '../components/Exito';
     import Error from '../components/Error';
+    import RecursoPreview from '../components/RecursoPreview';
     import { mapState } from 'vuex';
     export default {
         name: 'Portada',
@@ -136,16 +103,25 @@
                     this.mensajeError = error.message;
                 }).finally(()=> this.trabajando = false);
             },
+            eliminar(id) {
+                this.mensajeError = '';
+                fb.recursosColeccion.doc(id).delete()
+                    .catch(error => {
+                        console.error(error);
+                        this.mensajeError = error.message;
+                    });
+            },
             limpiar() {
                 this.titulo = this.descripcion = this.url = '';
             }
         },
         computed: {
-            ...mapState(['usuario', 'perfil']),
+            ...mapState(['usuario', 'perfil', 'recursos']),
         },
         components: {
             Exito,
             Error,
+            RecursoPreview,
         }
     }
 </script>
