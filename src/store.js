@@ -19,15 +19,19 @@ const store = new Vuex.Store({
     },
     mutations: {
         establecerUsuario(state, val) {
-
+            state.usuario = val;
         },
         establecerPerfil(state, val) {
-
+            state.perfil = val;
         }
     },
     actions: {
         obtenerPerfilUsuario({commit, state}) {
-
+            fb.usuariosColeccion.doc(state.usuario.uid).get().then(res => {
+                commit('establecerPerfil', res.data());
+            }).catch(error =>{
+                console.error(error);
+            });
         }
     }
 });
