@@ -24,6 +24,9 @@
                         </div>
                     </form>
 
+                    <Error v-show="mensajeError" :mensaje="mensajeError"></Error>
+                    <Exito @cerrarMensaje="mensajeExito = ''" v-show="mensajeExito" :mensaje="mensajeExito"></Exito>
+
                 </div>
             </div>
         </div>
@@ -32,24 +35,30 @@
 
 <script>
     const fb = require('../firebase.js');
+    import Error from '../components/Error';
+    import Exito from '../components/Exito';
     export default {
         name: "Recuperar",
         data() {
             return {
                 correoe: '',
                 trabajando: false,
+                mensajeError: '',
+                mensajeExito: '',
             }
         },
         methods: {
             recuperar() {
                 this.trabajando = true;
+                this.mensajeError = this.mensajeExito = '';
 
                 fb.auth.sendPasswordResetEmail(this.correoe).then(()=>{
-                    console.info('Operación realizada correctamente, mira tu correo.');
+                    this.mensajeExito = 'Operación realizada correctamente, chequea tu correo.';
                     this.correoe = '';
                     this.redirigir();
                 }).catch(error => {
                     console.error(error);
+                    this.mensajeError = error.message;
                 }).finally(()=> this.trabajando = false);
             },
             redirigir() {
@@ -58,6 +67,10 @@
                    this.$router.push('/login');
                 }, 2000);
             }
+        },
+        components: {
+            Error,
+            Exito,
         }
     }
 </script>

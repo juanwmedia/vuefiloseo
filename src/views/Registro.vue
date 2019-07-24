@@ -47,7 +47,7 @@
                         </div>
                     </form>
 
-
+                    <Error v-show="mensajeError" :mensaje="mensajeError"></Error>
 
                     <hr>
                     <ul>
@@ -65,6 +65,7 @@
 
 <script>
     const fb = require('../firebase.js');
+    import Error from '../components/Error';
     export default {
         name: "Registro",
         data() {
@@ -74,12 +75,14 @@
                 correoe: '',
                 contrasena: '',
                 trabajando: false,
+                mensajeError: '',
             }
         },
         methods: {
             registro() {
 
                 this.trabajando = true;
+                this.mensajeError = '';
 
                 fb.auth.createUserWithEmailAndPassword(this.correoe, this.contrasena).then(user => {
                     // Guardar los datos (UID) del nuevo usuario
@@ -95,12 +98,17 @@
                        this.$router.push('/');
                     }).catch(error => {
                         console.error(error);
+                        this.mensajeError = error.message;
                     });
 
                 }).catch(error => {
                     console.error(error);
+                    this.mensajeError = error.message;
                 }).finally(()=> this.trabajando = false);
             }
+        },
+        components: {
+            Error,
         }
     }
 </script>

@@ -31,7 +31,7 @@
                         </div>
                     </form>
 
-
+                    <Error v-show="mensajeError" :mensaje="mensajeError"></Error>
 
                     <hr>
                     <ul>
@@ -49,6 +49,7 @@
 
 <script>
     const fb = require('../firebase.js');
+    import Error from '../components/Error';
     export default {
         name: "Login",
         data() {
@@ -56,11 +57,13 @@
                 correoe: '',
                 contrasena: '',
                 trabajando: false,
+                mensajeError: '',
             }
         },
         methods: {
             login() {
                 this.trabajando = true;
+                this.mensajeError = '';
 
                 fb.auth.signInWithEmailAndPassword(this.correoe, this.contrasena).then(user => {
                     // guardar la info del usuario (UID)
@@ -73,8 +76,12 @@
                     this.$router.push('/');
                 }).catch(error => {
                     console.error(error);
+                    this.mensajeError = error.message;
                 }).finally(()=> this.trabajando = false);
             }
+        },
+        components: {
+            Error,
         }
     }
 </script>
