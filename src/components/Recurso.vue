@@ -18,21 +18,26 @@
 
                 <!-- Comentarios -->
                 <h2 class="subtitle">Comentarios</h2>
-                <form>
+                <form @submit.prevent="comentar">
                     <div class="field">
                         <div class="control">
-                            <textarea class="textarea" placeholder="Textarea" required></textarea>
+                            <textarea v-model.trim="comentario" class="textarea" placeholder="Textarea" required></textarea>
                         </div>
                     </div>
                     <div class="field">
                         <p class="control">
-                            <button class="button is-info">
+                            <button v-if="usuario" :disabled="!comentario.length" class="button is-info" :class="{ 'is-loading': trabajando }">
                                 Comentar
                             </button>
+                            <span v-else>
+                                Para comentar debes estar <router-link to="/registro">registrado</router-link>.
+                            </span>
                         </p>
                     </div>
                 </form>
 
+                <Error v-show="mensajeError" :mensaje="mensajeError"></Error>
+                <Exito @cerrarMensaje="mensajeExito = ''" v-show="mensajeExito" :mensaje="mensajeExito"></Exito>
 
             </section>
             <footer class="modal-card-foot">
@@ -53,6 +58,8 @@
 <script>
     import { mapState } from 'vuex';
     import moment from 'moment';
+    import Exito from '../components/Exito';
+    import Error from '../components/Error';
     const fb = require('../firebase.js');
     export default {
         name: "Recurso",
@@ -73,8 +80,11 @@
             return {
                 indice: null,
                 recurso: {},
+                comentario: '',
                 trabajando: false,
                 votado: true,
+                mensajeError: '',
+                mensajeExito: '',
             }
         },
         props: ['id'],
@@ -101,12 +111,41 @@
                 }).catch(error => {
                     console.error(error);
                 }).finally(() => this.trabajando = false);
+            },
+            comentar() {
+                this.trabajando = true;
+                this.mensajeExito = this.mensajeError = '';
+
+                fb.comentariosColeccion.add({
+                    cuando: new Date(),
+                    comentario: this.comentario,
+                    recursoId: this.id,
+                    usuarioId: this.usuario.uid,
+                    nombre: this.perfil.nombre,
+                }).then(()=>{
+                    fb.recursosColeccion.doc(this.id).update({
+                        comentarios: this.recurso.comentarios + 1,
+                    }).then(() => {
+                        this.mensajeExito = 'Comentario añadido con éxito';
+                        this.comentario = '';
+                    }).catch(error => {
+                        console.error(error);
+                        this.mensajeError = error.message;
+                    });
+                }).catch(error => {
+                    console.error(error);
+                    this.mensajeError = error.message;
+                }).finally(() => this.trabajando = false);
             }
         },
         filters: {
             fechaHace(valor) {
                 return moment(valor.toDate()).fromNow();
             }
+        },
+        components: {
+            Exito,
+            Error,
         }
     }
 </script>
