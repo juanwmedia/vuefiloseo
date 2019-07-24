@@ -12,13 +12,34 @@ fb.auth.onAuthStateChanged(user =>{
     }
 
     fb.recursosColeccion.orderBy('cuando', 'desc').onSnapshot(querySnapshot => {
-        let recursos = [];
-        querySnapshot.forEach(doc => {
-           let recurso = doc.data();
-           recurso.id = doc.id;
-           recursos.push(recurso)
-        });
-        store.commit('establecerRecursos', recursos);
+        let propio = false;
+
+        // hay alguien conectado y novedades en el stream de recursos
+        if (store.state.usuario && querySnapshot.docs.length) {
+            propio = (store.state.usuario.uid === querySnapshot.docChanges()[0].doc.data().userId);
+        }
+
+        // Hay nuevos recuros y son de otros usuarios
+        if (querySnapshot.docChanges().length !== querySnapshot.docs.length
+        && querySnapshot.docChanges()[0].type == 'added' && !propio) {
+
+            let recurso = querySnapshot.docChanges()[0].doc.data();
+            recurso.id = querySnapshot.docChanges()[0].doc.id;
+
+            // Evitamos duplicados
+            if (!store.state.otrosRecursos.some(otro => otro.id === recurso.id)) {
+                store.commit('establecerOtros', recurso);
+            }
+        } else {
+            // Son nuestros recursos
+            let recursos = [];
+            querySnapshot.forEach(doc => {
+                let recurso = doc.data();
+                recurso.id = doc.id;
+                recursos.push(recurso)
+            });
+            store.commit('establecerRecursos', recursos);
+        }
     })
 });
 
@@ -27,6 +48,7 @@ const store = new Vuex.Store({
         usuario: null,
         perfil: {},
         recursos: [],
+        otrosRecursos: [],
     },
     mutations: {
         establecerUsuario(state, val) {
@@ -37,6 +59,9 @@ const store = new Vuex.Store({
         },
         establecerRecursos(state, val) {
             state.recursos = val;
+        },
+        establecerOtros(state, val) {
+            state.otrosRecursos.unshift(val);
         }
     },
     actions: {

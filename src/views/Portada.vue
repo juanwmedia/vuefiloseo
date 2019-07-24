@@ -14,6 +14,8 @@
                                     :datos="recurso">
                     </RecursoPreview>
 
+                    <h1 class="has-text-centered" v-show="!recursos.length">No existen recursos, agrega el primero.</h1>
+
                 </div>
 
                 <!-- Agregar recurso -->
@@ -116,7 +118,7 @@
             }
         },
         computed: {
-            ...mapState(['usuario', 'perfil', 'recursos']),
+            ...mapState(['usuario', 'perfil', 'recursos', 'otrosRecursos']),
         },
         components: {
             Exito,
