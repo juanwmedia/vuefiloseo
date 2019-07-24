@@ -62,6 +62,9 @@ const store = new Vuex.Store({
         },
         establecerOtros(state, val) {
             state.otrosRecursos.unshift(val);
+        },
+        limpiarOtros(state) {
+            state.otrosRecursos = [];
         }
     },
     actions: {

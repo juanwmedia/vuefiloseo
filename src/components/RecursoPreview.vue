@@ -64,6 +64,10 @@
 </script>
 
 <style scoped>
+    .level.is-pulled-left {
+        margin-bottom: 0;
+    }
+
     .propio {
         background-color: #ccc;
     }

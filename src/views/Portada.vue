@@ -8,6 +8,15 @@
             <div class="columns" id="portada">
                 <div class="column is-half-tablet">
 
+                    <transition name="fade">
+                        <div @click="mostrarOtros" v-if="otrosRecursos.length" class="notification is-info" id="aviso-nuevos">
+                            <p>
+                                Se han agregado <strong>{{ otrosRecursos.length }} nuevo/s recurso/s</strong>.<br>
+                                <a>Haz click aquí para verlos</a>.
+                            </p>
+                        </div>
+                    </transition>
+
                     <RecursoPreview :key="recurso.id"
                                     @eliminar="eliminar"
                                     v-for="recurso in recursos"
@@ -115,6 +124,10 @@
             },
             limpiar() {
                 this.titulo = this.descripcion = this.url = '';
+            },
+            mostrarOtros() {
+                this.$store.commit('establecerRecursos', this.otrosRecursos.concat(this.recursos));
+                this.$store.commit('limpiarOtros');
             }
         },
         computed: {
@@ -129,6 +142,21 @@
 </script>
 
 <style scoped>
+    #aviso-nuevos {
+        animation: salto 0.5s;
+        animation-direction: alternate;
+        animation-iteration-count: infinite;
+    }
+
+    .top a {
+        color: inherit;
+    }
+
+    @keyframes salto {
+        from { transform: translateY(0); }
+        to   { transform: translateY(10px); }
+    }
+
     @media screen and (max-width: 768px) {
         #portada {
             display: flex;
